@@ -1,0 +1,30 @@
+name: ChatGPT Code Review
+
+on:
+  push:
+    branches:
+      - main  # або будь-яка інша гілка, яку хочете перевіряти
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # використовуйте потрібну версію Python
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install openai
+
+    - name: Review code with ChatGPT
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: |
+        python review_code.py
