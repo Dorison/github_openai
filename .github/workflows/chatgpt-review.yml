@@ -1,26 +1,29 @@
-name: Code Review
-
-permissions:
-  contents: read
-  pull-requests: write
+name: Code Review with ChatGPT
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [opened, synchronize]
+  push:
+    branches:
+      - main  # або будь-яка інша гілка, яку ви хочете моніторити
 
 jobs:
-  code_review:
+  code_review_job:
     runs-on: ubuntu-latest
+    name: ChatGPT Code Review
     steps:
-      - uses: actions/checkout@v2
-      - name: ChatGPT CodeReviewer
-        uses: anc95/ChatGPT-CodeReview@v1.0.13
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          MODEL: gpt-3.5-turbo
-          LANGUAGE: en
-          top_p: 1
-          temperature: 1
-          max_tokens: 10000
-          MAX_PATCH_LENGTH: 10000
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Code Review with ChatGPT
+        uses: cirolini/genai-code-review@v2
+        with:
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          github_token: ${{ secrets.GH_TOKEN }}
+          github_pr_id: ${{ github.event.number }}
+          openai_model: "gpt-3.5-turbo"
+          openai_temperature: 0.5
+          openai_max_tokens: 2048
+          mode: files
+          language: en
+          custom_prompt: ""
