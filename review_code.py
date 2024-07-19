@@ -7,7 +7,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # Функція для отримання змін у коді
 def get_code_changes():
     # Використовуйте git для отримання змін
-    changes = os.popen('git diff HEAD~1 HEAD').read()
+    changes = os.popen('git diff HEAD~1..HEAD').read()
     return changes
 
 # Функція для виконання перевірки коду ChatGPT
@@ -19,7 +19,7 @@ def review_code(code_changes):
             {"role": "user", "content": f"Please review the following code changes and provide feedback:\n\n{code_changes}"}
         ]
     )
-    return response.choices[0].message['content']
+    return response['choices'][0]['message']['content']
 
 # Отримання змін у коді
 code_changes = get_code_changes()
