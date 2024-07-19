@@ -7,13 +7,15 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Функція для отримання змін у коді
 def get_code_changes():
-    # Використовуйте git для отримання змін
     try:
+        # Перевірка наявності попереднього коміту
+        subprocess.check_output(['git', 'rev-parse', 'HEAD^'], stderr=subprocess.STDOUT)
+        # Отримання змін між останніми двома комітами
         changes = subprocess.check_output(['git', 'diff', 'HEAD^', 'HEAD'], stderr=subprocess.STDOUT)
-        return changes.decode('utf-8')
-    except subprocess.CalledProcessError as e:
-        print(f"Error obtaining git diff: {e.output.decode('utf-8')}")
-        return ""
+    except subprocess.CalledProcessError:
+        # Отримання змін у останньому коміті
+        changes = subprocess.check_output(['git', 'diff', 'HEAD'], stderr=subprocess.STDOUT)
+    return changes.decode('utf-8')
 
 # Функція для виконання перевірки коду ChatGPT
 def review_code(code_changes):
@@ -24,7 +26,7 @@ def review_code(code_changes):
             {"role": "user", "content": f"Please review the following code changes and provide feedback:\n\n{code_changes}"}
         ]
     )
-    return response.choices[0].message['content']
+    return response['choices'][0]['message']['content']
 
 # Отримання змін у коді
 code_changes = get_code_changes()
