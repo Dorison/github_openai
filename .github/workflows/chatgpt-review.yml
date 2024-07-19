@@ -16,7 +16,7 @@ jobs:
       - name: ChatGPT CodeReviewer
         uses: anc95/ChatGPT-CodeReview@v1.0.13
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           MODEL: gpt-3.5-turbo
           LANGUAGE: en
